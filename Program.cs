@@ -1,9 +1,7 @@
 ﻿using MySqlConnector;
 
-string connectionString = "Server=localhost;Database=holiday_maker;User ID=root;Password=12321;UseAffectedRows=false;";
-
-await using var connection = new MySqlConnection(connectionString);
-await connection.OpenAsync();
+var database = new Database();
+await using var connection = await database.OpenConnectionAsync();
 
 // REPOSITORY (klass med databas-queries)
 
