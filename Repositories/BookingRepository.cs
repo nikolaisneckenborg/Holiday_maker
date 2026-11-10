@@ -1,4 +1,5 @@
-public class BookingRepository
+using MySqlConnector;
+public class BookingRepository(MySqlConnection connection)
 {
     
 }

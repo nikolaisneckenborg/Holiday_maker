@@ -1,4 +1,5 @@
-public class RoomRepository
+using MySqlConnector;
+public class RoomRepository(MySqlConnection connection)
 {
     
 }

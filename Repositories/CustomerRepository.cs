@@ -1,4 +1,5 @@
-public class CustomerRepository
+using MySqlConnector;
+public class CustomerRepository(MySqlConnection connection)
 {
     
 }
