@@ -1,5 +1,4 @@
-﻿using MySqlConnector;
-
+﻿
 var database = new Database();
 await using var connection = await database.OpenConnectionAsync();
 
