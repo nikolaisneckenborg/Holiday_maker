@@ -1,10 +1,14 @@
 
 public class Console_ui(CustomerRepository customers, RoomRepository rooms, BookingRepository bookings)
 {
+    private Customer? _currentCustomer;
+
     public async Task RunAsync()
     {
-        Console.WriteLine("Holiday Maker Test");
-    
+        while (true)
+        {
+            await SelectCustomerAsync();
+        } 
     }
 
     private async Task SelectCustomerAsync()
@@ -31,6 +35,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         }
 
         Console.WriteLine($"Vald kund: {selected.FirstName} {selected.LastName}");
+        _currentCustomer = selected;
     }
     
 }
