@@ -93,4 +93,18 @@ public class BookingRepository(MySqlConnection connection)
         }
         return bookings;
     }
+    public async Task<bool> DeleteAsync(int bookingId, int customerId)
+    {
+        await using var deleteCommand = new MySqlCommand(
+            """
+            DELETE FROM bookings 
+            WHERE id = @bookingId AND customer_id = @customerId;
+            """, connection);
+
+        deleteCommand.Parameters.AddWithValue("@bookingId", bookingId);
+        deleteCommand.Parameters.AddWithValue("@customerId", customerId);
+
+        int affectedRows = await deleteCommand.ExecuteNonQueryAsync();
+        return affectedRows > 0;
+    }
 }

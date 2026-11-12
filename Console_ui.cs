@@ -26,6 +26,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
                 case "2": await SelectCustomerAsync(); break;
                 case "3": await SearchAvailableRoomAsync(); break;
                 case "4": await ShowBookingsAsync(); break;
+                case "6": await CancelBookingAsync(); break;
                 case "0": return;
                 default: Console.WriteLine("Ogiltigt val."); break;
             }
@@ -154,6 +155,25 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             }
         }
 
+    }
+    private async Task CancelBookingAsync()
+    {
+        if(_currentCustomer == null)
+        {
+            Console.WriteLine("Ingen kund är vald");
+            return;
+        }
+        await ShowBookingsAsync();
+        int bookingId = ReadInt("Ange bokningsnummer att avboka: ");
+        bool cancel = await bookings.DeleteAsync(bookingId, _currentCustomer.Id);
+        if (cancel)
+        {
+            Console.WriteLine($"Din bokning med id: {bookingId} har avbokats.");
+        }
+        else
+        {
+            Console.WriteLine("Det finns ingen bokning med det id:t.");
+        }
     }
     private static string ReadRequired(string prompt)
     {
