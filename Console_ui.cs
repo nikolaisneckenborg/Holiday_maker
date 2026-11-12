@@ -1,4 +1,4 @@
-
+using MySqlConnector;
 public class Console_ui(CustomerRepository customers, RoomRepository rooms, BookingRepository bookings)
 {
     private Customer? _currentCustomer;
@@ -37,7 +37,16 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         string mail = ReadRequired("E-post: ");
         string phone = ReadRequired("Telefon: ");
 
-        await customers.CreateAsync(firstName, lastName, mail, phone);
+        try
+        {
+            int id = await customers.CreateAsync(firstName, lastName, mail, phone);
+            Console.WriteLine($"Kund registrerad med id {id}.");
+            _currentCustomer = new Customer(id, firstName, lastName, mail, phone); 
+        }
+        catch(MySqlException ex)
+        {
+            Console.WriteLine($"Kunden kunde inte sparas: {ex.Message}");
+        }
 
     }
 
