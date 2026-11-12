@@ -1,7 +1,8 @@
 CREATE DATABASE IF NOT EXISTS `holiday_maker`;
 USE `holiday_maker`;
 
--- Drop in reverse dependency order so the script can be re-run
+-- Ta bort i omvänd beroendeordning så att skriptet kan köras flera gånger
+DROP VIEW IF EXISTS `booking_details`;
 DROP TABLE IF EXISTS `bookings`;
 DROP TABLE IF EXISTS `rooms`;
 DROP TABLE IF EXISTS `accommodations`;
@@ -22,9 +23,9 @@ CREATE TABLE `accommodations`(
     `location` VARCHAR(255) NOT NULL,
     `pool` BOOLEAN NOT NULL DEFAULT FALSE,
     `restaurant` BOOLEAN NOT NULL DEFAULT FALSE,
-    `rating` TINYINT UNSIGNED NOT NULL,              -- 1-5 stars
-    `distance_to_beach` INT UNSIGNED NOT NULL,       -- meters
-    `distance_to_city_center` INT UNSIGNED NOT NULL, -- meters
+    `rating` TINYINT UNSIGNED NOT NULL,              -- 1-5 stjärnor
+    `distance_to_beach` INT UNSIGNED NOT NULL,       -- meter
+    `distance_to_city_center` INT UNSIGNED NOT NULL, -- meter
     CONSTRAINT `accommodations_rating_check` CHECK (`rating` BETWEEN 1 AND 5)
 );
 
@@ -55,6 +56,22 @@ CREATE TABLE `bookings`(
     CONSTRAINT `bookings_room_id_foreign`
         FOREIGN KEY (`room_id`) REFERENCES `rooms`(`id`) ON DELETE CASCADE
 );
+
+-- Bokning med boende, rum och uträknat totalpris.
+-- Totalpriset härleds (antal nätter * pris per natt) och lagras därför inte i någon tabell.
+CREATE VIEW `booking_details` AS
+SELECT
+    b.`id`,
+    b.`customer_id`,
+    a.`name` AS `accommodation_name`,
+    r.`room_number`,
+    b.`check_in_date`,
+    b.`check_out_date`,
+    b.`number_of_people`,
+    DATEDIFF(b.`check_out_date`, b.`check_in_date`) * r.`price_per_night` AS `total_price`
+FROM `bookings` b
+JOIN `rooms` r ON r.`id` = b.`room_id`
+JOIN `accommodations` a ON a.`id` = r.`accommodation_id`;
 
 -- ---------------------------------------------------------------
 -- Testdata
