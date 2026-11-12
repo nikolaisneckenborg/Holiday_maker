@@ -238,9 +238,42 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             {
                 Console.WriteLine("Ange ett heltal större än 0");
             }
-            
+
         }
     }
-    
+
+    private static bool? ReadOptionalBool(string prompt)
+    {
+        while (true)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine()?.Trim().ToLower();
+
+            if (string.IsNullOrEmpty(input))
+                return null;
+            if (input == "j")
+                return true;
+            if (input == "n")
+                return false;
+
+            Console.WriteLine("Svara j, n eller lämna tomt.");
+        }
+    }
+
+    private static int? ReadOptionalInt(string prompt)
+    {
+        while (true)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrEmpty(input))
+                return null;
+            if (int.TryParse(input, out int value) && value >= 0)
+                return value;
+
+            Console.WriteLine("Ange ett heltal (0 eller mer) eller lämna tomt.");
+        }
+    }
 }
 
