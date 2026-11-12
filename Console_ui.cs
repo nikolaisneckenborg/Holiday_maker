@@ -22,6 +22,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
 
             switch (Console.ReadLine())
             {
+                case "1": await CreateCustomerAsync(); break;
                 case "2": await SelectCustomerAsync(); break;
                 case "0": return;
                 default: Console.WriteLine("Ogiltigt val."); break;
@@ -31,8 +32,12 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
 
     private async Task CreateCustomerAsync()
     {
-        Console.Write("Ange förnamn: ");
-        string? input = Console.ReadLine();
+        string firstName = ReadRequired("Förnamn: ");
+        string lastName = ReadRequired("Efternamn: ");
+        string mail = ReadRequired("E-post: ");
+        string phone = ReadRequired("Telefon: ");
+
+        await customers.CreateAsync(firstName, lastName, mail, phone);
 
     }
 
