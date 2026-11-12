@@ -79,7 +79,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
     }
     private async Task SearchAvailableRoomAsync()
     {
-        string location = ReadRequired("Välj boende: ");
+        string location = ReadRequired("Välj ort: ");
         DateOnly checkinDate = ReadDate("Välj check-in datum: ");
         DateOnly checkoutDate = ReadDate("Välj check-ut datum: ");
         if(checkoutDate <= checkinDate)
@@ -87,7 +87,19 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             Console.WriteLine("Din check-out måste vara efter check-in");
             return;
         }
-
+        int people = ReadInt("Antal personer: ");
+        var availableRooms = await rooms.GetAvailableRoomsAsync(location, checkinDate, checkoutDate, people);
+        if(availableRooms.Count == 0)
+        {
+            Console.WriteLine("Inga lediga rum hittades");
+        }
+        else
+        {
+            foreach(var r in availableRooms)
+            {
+                Console.WriteLine($"{r.RoomId}. {r.AccommodationName}, {r.Location} - rum {r.RoomNumber}, max {r.MaximumPeople} personer, {r.PricePerNight} kr/natt");
+            }
+        }
     }
     private static string ReadRequired(string prompt)
     {
@@ -113,6 +125,23 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             else
             {
                 Console.WriteLine("Ogiltigt datum, skriv formatet: 2000-10-15");
+            }
+            
+        }
+    }
+    private static int ReadInt(string prompt)
+    {
+        while (true)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine()?.Trim();
+            if(int.TryParse(input, out int people) && people > 0)
+            {
+                return people;
+            }
+            else
+            {
+                Console.WriteLine("Ange ett heltal större än 0");
             }
             
         }
