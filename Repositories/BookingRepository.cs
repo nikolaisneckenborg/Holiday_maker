@@ -61,5 +61,36 @@ public class BookingRepository(MySqlConnection connection)
 
         await insertCommand.ExecuteNonQueryAsync();
         return (int)insertCommand.LastInsertedId;
-    }   
+    }
+    public async Task<List<Booking>> GetByCustomerAsync(int customerId)
+    {
+        await using var selectCommand = new MySqlCommand(
+            // Använder View booking_details som jag skapade i Sql filen
+            """
+            SELECT id, accommodation_name, room_number, check_in_date,
+                check_out_date, number_of_people, total_price
+            FROM booking_details
+            WHERE customer_id = @customerId
+            ORDER BY check_in_date;
+            """, connection);
+
+        selectCommand.Parameters.AddWithValue("@customerId", customerId);
+
+        List<Booking> bookings = [];
+        await using (var reader = await selectCommand.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                bookings.Add(new Booking(
+                    reader.GetInt32("id"),
+                    reader.GetString("accommodation_name"),
+                    reader.GetString("room_number"),
+                    reader.GetDateOnly("check_in_date"),
+                    reader.GetDateOnly("check_out_date"),
+                    reader.GetInt32("number_of_people"),
+                    reader.GetDecimal("total_price")));
+            }
+        }
+        return bookings;
+    }
 }

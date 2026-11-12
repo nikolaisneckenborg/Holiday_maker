@@ -25,6 +25,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
                 case "1": await CreateCustomerAsync(); break;
                 case "2": await SelectCustomerAsync(); break;
                 case "3": await SearchAvailableRoomAsync(); break;
+                case "4": await ShowBookingsAsync(); break;
                 case "0": return;
                 default: Console.WriteLine("Ogiltigt val."); break;
             }
@@ -129,6 +130,29 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         Console.WriteLine($"{chosenRoom.AccommodationName}, rum {chosenRoom.RoomNumber}");
         Console.WriteLine($"{checkinDate} – {checkoutDate}, {nights} nätter, {people} personer");
         Console.WriteLine($"Totalpris: {totalPrice} kr");
+
+    }
+    private async Task ShowBookingsAsync()
+    {
+        if(_currentCustomer == null)
+        {
+            Console.WriteLine("Ingen kund är vald");
+            return;
+        }
+        List<Booking> bookinglist = await bookings.GetByCustomerAsync(_currentCustomer.Id);
+        if(bookinglist.Count == 0)
+        {
+            Console.WriteLine("Inga bokningar registrerade.");
+        }
+        else
+        {
+            foreach (var b in bookinglist)
+            {
+                int nights = b.CheckOutDate.DayNumber - b.CheckInDate.DayNumber;
+                Console.WriteLine($"Bokning {b.Id}: {b.AccommodationName}, rum {b.RoomNumber}");
+                Console.WriteLine($"  {b.CheckInDate} – {b.CheckOutDate} ({nights} nätter), {b.NumberOfPeople} personer, totalt {b.TotalPrice} kr");
+            }
+        }
 
     }
     private static string ReadRequired(string prompt)
