@@ -26,4 +26,21 @@ public class CustomerRepository(MySqlConnection connection)
 
         return result;
     }
+    public async Task<int> CreateAsync(string firstName, string lastName, string mail, string phoneNumber)
+    {
+        await using var command = new MySqlCommand(
+            """
+            INSERT INTO customers (first_name, last_name, mail, phone_number)
+            VALUES (@firstName, @lastName, @mail, @phoneNumber);
+            """, connection);
+        
+        command.Parameters.AddWithValue("@firstName", firstName);
+        command.Parameters.AddWithValue("@lastName", lastName);
+        command.Parameters.AddWithValue("@mail", mail);
+        command.Parameters.AddWithValue("@phoneNumber", phoneNumber);
+
+        await command.ExecuteNonQueryAsync();
+        return (int)command.LastInsertedId;
+    }
+    
 }
