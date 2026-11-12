@@ -107,4 +107,43 @@ public class BookingRepository(MySqlConnection connection)
         int affectedRows = await deleteCommand.ExecuteNonQueryAsync();
         return affectedRows > 0;
     }
+    public async Task<bool> UpdatePeopleAsync(int bookingId, int customerId, int newPeople)
+    {
+        await using var selectCommand = new MySqlCommand(
+            """
+            SELECT r.maximum_people
+            FROM bookings b
+            JOIN rooms r ON r.id = b.room_id
+            WHERE b.id = @bookingId AND b.customer_id = @customerId;
+            """, connection);
+
+        selectCommand.Parameters.AddWithValue("@bookingId", bookingId);
+        selectCommand.Parameters.AddWithValue("@customerId", customerId);
+
+        await using (var reader = await selectCommand.ExecuteReaderAsync())
+        {
+            if(!await reader.ReadAsync())
+            {
+                return false;
+            }
+            int maxPeople = reader.GetInt32("maximum_people");
+            if(newPeople > maxPeople)
+            {
+                return false;
+            }
+        }
+        await using var updateCommand = new MySqlCommand(
+            """
+            UPDATE bookings SET number_of_people = @newPeople
+            WHERE id = @bookingId AND customer_id = @customerId;
+            """, connection);
+
+        updateCommand.Parameters.AddWithValue("@newPeople", newPeople);
+        updateCommand.Parameters.AddWithValue("@bookingId", bookingId);
+        updateCommand.Parameters.AddWithValue("@customerId", customerId);
+
+        int updated = await updateCommand.ExecuteNonQueryAsync();
+
+        return updated > 0;
+    }
 }
