@@ -22,6 +22,29 @@ public class BookingRepository(MySqlConnection connection)
                 return null;
             }
         }
+
+        await using var selectMaxPeople = new MySqlCommand(
+            """
+            SELECT maximum_people FROM rooms 
+            WHERE id = @roomId
+            """, connection);
+
+        selectMaxPeople.Parameters.AddWithValue("@roomId", roomId);
+
+        await using (var readerMaxPeople = await selectMaxPeople.ExecuteReaderAsync())
+        {
+            if (!await readerMaxPeople.ReadAsync())
+            {
+                return null; // rummet finns inte
+            }
+
+            int maxPeople = readerMaxPeople.GetInt32("maximum_people");
+
+            if (numPeople > maxPeople)
+            {
+                return null; // för många för att få plats i rummet
+            }
+        }
         
         
         await using var insertCommand = new MySqlCommand(
