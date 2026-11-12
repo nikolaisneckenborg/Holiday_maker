@@ -106,6 +106,14 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
                 Console.WriteLine($"{r.RoomId}. {r.AccommodationName}, {r.Location} - rum {r.RoomNumber}, max {r.MaximumPeople} personer, {r.PricePerNight} kr/natt");
             }
         }
+        int roomId = ReadInt("Ange rums-id du vill boka: ");
+        
+        AvailableRoom? chosenRoom = availableRooms.FirstOrDefault(r => r.RoomId == roomId);
+        if (chosenRoom is null)
+        {
+            Console.WriteLine("Det rummet finns inte i sökresultatet.");
+            return;
+        }
 
     }
     private static string ReadRequired(string prompt)
