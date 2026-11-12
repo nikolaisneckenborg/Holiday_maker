@@ -107,13 +107,28 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             }
         }
         int roomId = ReadInt("Ange rums-id du vill boka: ");
-        
+
         AvailableRoom? chosenRoom = availableRooms.FirstOrDefault(r => r.RoomId == roomId);
         if (chosenRoom is null)
         {
             Console.WriteLine("Det rummet finns inte i sökresultatet.");
             return;
         }
+
+        int? bookingId = await bookings.CreateAsync(_currentCustomer.Id, roomId, checkinDate, checkoutDate, people);
+        if (bookingId is null)
+        {
+            Console.WriteLine("Bokningen kunde inte genomföras. Rummet är inte längre ledigt eller för litet.");
+            return;
+        }
+
+        int nights = checkoutDate.DayNumber - checkinDate.DayNumber;
+        decimal totalPrice = nights * chosenRoom.PricePerNight;
+
+        Console.WriteLine($"Bokning klar! Bokningsnummer: {bookingId}");
+        Console.WriteLine($"{chosenRoom.AccommodationName}, rum {chosenRoom.RoomNumber}");
+        Console.WriteLine($"{checkinDate} – {checkoutDate}, {nights} nätter, {people} personer");
+        Console.WriteLine($"Totalpris: {totalPrice} kr");
 
     }
     private static string ReadRequired(string prompt)
