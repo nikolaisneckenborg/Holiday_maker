@@ -76,17 +76,22 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         Console.WriteLine($"Vald kund: {selected.FirstName} {selected.LastName}");
         _currentCustomer = selected;
     }
-    private static string ReadRequired(string prompt)
-{
-    while (true)
+    private async Task SearchAvailableRoomAsync()
     {
-        Console.Write(prompt);
-        string? input = Console.ReadLine()?.Trim();
-        if (!string.IsNullOrEmpty(input))
-            return input;
-        Console.WriteLine("Fältet får inte vara tomt.");
+        
     }
-}
+    private static string ReadRequired(string prompt)
+    {
+        while (true)
+        {
+            Console.Write(prompt);
+            string? input = Console.ReadLine()?.Trim();
+            if (!string.IsNullOrEmpty(input))
+                return input;
+            Console.WriteLine("Fältet får inte vara tomt.");
+        }
+    }
+
     
 }
 
