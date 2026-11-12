@@ -96,7 +96,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             return;
         }
         int people = ReadInt("Antal personer: ");
-        var availableRooms = await rooms.GetAvailableRoomsAsync(location, checkinDate, checkoutDate, people);
+        var availableRooms = await rooms.GetAvailableRoomsAsync(location, checkinDate, checkoutDate, people, null, null, null, null, "price");
         if(availableRooms.Count == 0)
         {
             Console.WriteLine("Inga lediga rum hittades");

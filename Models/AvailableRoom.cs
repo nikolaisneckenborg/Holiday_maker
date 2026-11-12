@@ -6,8 +6,8 @@ public class AvailableRoom
     public string RoomNumber { get; }
     public int MaximumPeople { get; }
     public decimal PricePerNight { get; }
-
-    public AvailableRoom(int roomId, string accommodationName, string location, string roomNumber, int maximumPeople, decimal pricePerNight)
+    public int Rating { get; }
+    public AvailableRoom(int roomId, string accommodationName, string location, string roomNumber, int maximumPeople, decimal pricePerNight, int rating)
     {
         RoomId = roomId;
         AccommodationName = accommodationName;
@@ -15,5 +15,6 @@ public class AvailableRoom
         RoomNumber = roomNumber;
         MaximumPeople = maximumPeople;
         PricePerNight = pricePerNight;
+        Rating = rating;
     }
 }
