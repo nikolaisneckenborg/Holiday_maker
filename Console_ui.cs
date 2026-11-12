@@ -26,6 +26,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
                 case "2": await SelectCustomerAsync(); break;
                 case "3": await SearchAvailableRoomAsync(); break;
                 case "4": await ShowBookingsAsync(); break;
+                case "5": await ChangePeopleAsync(); break;
                 case "6": await CancelBookingAsync(); break;
                 case "0": return;
                 default: Console.WriteLine("Ogiltigt val."); break;
@@ -173,6 +174,26 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         else
         {
             Console.WriteLine("Det finns ingen bokning med det id:t.");
+        }
+    }
+    private async Task ChangePeopleAsync()
+    {
+        if(_currentCustomer == null)
+        {
+            Console.WriteLine("Ingen kund är vald");
+            return;
+        }
+        await ShowBookingsAsync();
+        int bookingId = ReadInt("Ange bokningsnummer att ändra: ");
+        int people = ReadInt("Ange antal personer: ");
+        bool update = await bookings.UpdatePeopleAsync(bookingId, _currentCustomer.Id, people);
+        if (update)
+        {
+            Console.WriteLine($"Din bokning med id: {bookingId} har ändrats till {people} personer.");
+        }
+        else
+        {
+            Console.WriteLine("Kunde inte ändra: bokningen finns inte för kunden eller rummet har inte plats för så många.");
         }
     }
     private static string ReadRequired(string prompt)
