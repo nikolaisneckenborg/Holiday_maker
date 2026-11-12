@@ -97,6 +97,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         if(availableRooms.Count == 0)
         {
             Console.WriteLine("Inga lediga rum hittades");
+            return;
         }
         else
         {
