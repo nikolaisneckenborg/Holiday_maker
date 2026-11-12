@@ -96,7 +96,14 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
             return;
         }
         int people = ReadInt("Antal personer: ");
-        var availableRooms = await rooms.GetAvailableRoomsAsync(location, checkinDate, checkoutDate, people, null, null, null, null, "price");
+        bool? pool = ReadOptionalBool("Pool? (j/n, tomt = spelar ingen roll): ");
+        bool? restaurant = ReadOptionalBool("Restaurang? (j/n, tomt = spelar ingen roll): ");
+        int? maxBeach = ReadOptionalInt("Max avstånd till stranden i meter (tomt = spelar ingen roll): ");
+        int? maxCenter = ReadOptionalInt("Max avstånd till centrum i meter (tomt = spelar ingen roll): ");
+        Console.Write("Sortera på 1 = pris (lägst först), 2 = betyg (högst först): ");
+        string? sortInput = Console.ReadLine()?.Trim();
+        string sortBy = sortInput == "2" ? "rating" : "price";
+        var availableRooms = await rooms.GetAvailableRoomsAsync(location, checkinDate, checkoutDate, people, pool, restaurant, maxBeach, maxCenter, sortBy);
         if(availableRooms.Count == 0)
         {
             Console.WriteLine("Inga lediga rum hittades");
@@ -106,7 +113,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
         {
             foreach(var r in availableRooms)
             {
-                Console.WriteLine($"{r.RoomId}. {r.AccommodationName}, {r.Location} - rum {r.RoomNumber}, max {r.MaximumPeople} personer, {r.PricePerNight} kr/natt");
+                Console.WriteLine($"{r.RoomId}. {r.AccommodationName}, {r.Location} - rum {r.RoomNumber}, max {r.MaximumPeople} personer, {r.PricePerNight} kr/natt, betyg {r.Rating}/5");
             }
         }
         int roomId = ReadInt("Ange rums-id du vill boka: ");
