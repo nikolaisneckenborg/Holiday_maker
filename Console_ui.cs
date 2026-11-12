@@ -79,6 +79,11 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
     }
     private async Task SearchAvailableRoomAsync()
     {
+        if(_currentCustomer == null)
+        {
+            Console.WriteLine("Du måste välja en kund först.");
+            return;
+        }
         string location = ReadRequired("Välj ort: ");
         DateOnly checkinDate = ReadDate("Välj check-in datum: ");
         DateOnly checkoutDate = ReadDate("Välj check-ut datum: ");
@@ -100,6 +105,7 @@ public class Console_ui(CustomerRepository customers, RoomRepository rooms, Book
                 Console.WriteLine($"{r.RoomId}. {r.AccommodationName}, {r.Location} - rum {r.RoomNumber}, max {r.MaximumPeople} personer, {r.PricePerNight} kr/natt");
             }
         }
+
     }
     private static string ReadRequired(string prompt)
     {
